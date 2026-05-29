@@ -21,3 +21,15 @@ export type Lead = {
   megler_navn: string[];
   status: "ny" | "sendt" | "betalt";
 };
+
+export type LeadLink = {
+  id: string;
+  lead_id: string;
+  megler_id: number;
+  megler_navn: string;
+  token: string;
+  created_at: string;
+  expires_at: string;
+  status: "pending" | "paid" | "expired";
+  stripe_session_id: string | null;
+};
