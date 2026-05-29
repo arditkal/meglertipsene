@@ -14,6 +14,8 @@ const LINK_STATUS_LABEL: Record<string, string> = { pending: "Venter", paid: "Be
 const LINK_STATUS_COLOR: Record<string, string> = { pending: "#d97706", paid: "#16a34a", expired: "#94a3b8" };
 const LINK_STATUS_BG: Record<string, string> = { pending: "#fffbeb", paid: "#f0fdf4", expired: "#f8fafc" };
 
+type LeadLinkWithMeta = LeadLink & { opened_at?: string | null };
+
 export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [password, setPassword] = useState("");
@@ -26,7 +28,7 @@ export default function AdminPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   // links per lead_id
-  const [linkMap, setLinkMap] = useState<Record<string, LeadLink[]>>({});
+  const [linkMap, setLinkMap] = useState<Record<string, LeadLinkWithMeta[]>>({});
   const [linkLoading, setLinkLoading] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -266,30 +268,40 @@ export default function AdminPage() {
                               ) : (
                                 <div className="space-y-2">
                                   {existingLinks.map((ll) => (
-                                    <div key={ll.id} className="flex items-center gap-3 rounded-lg p-3"
+                                    <div key={ll.id} className="rounded-lg p-3 space-y-2"
                                       style={{ background: "#f8fafc" }}>
-                                      {/* Status */}
-                                      <span className="text-base font-semibold px-2.5 py-0.5 rounded-full shrink-0"
-                                        style={{ color: LINK_STATUS_COLOR[ll.status], background: LINK_STATUS_BG[ll.status] }}>
-                                        {LINK_STATUS_LABEL[ll.status]}
-                                      </span>
-                                      {/* URL */}
-                                      <span className="text-base text-gray-500 truncate flex-1 font-mono text-sm">
-                                        /megler/{ll.token.slice(0, 12)}…
-                                      </span>
-                                      {/* Expiry */}
-                                      <span className="text-base text-gray-400 shrink-0 hidden sm:block">
-                                        Utløper {new Date(ll.expires_at).toLocaleDateString("nb-NO", { day: "2-digit", month: "short" })}
-                                      </span>
-                                      {/* Copy */}
-                                      <button
-                                        onClick={() => copyLink(ll.token)}
-                                        className="flex items-center gap-1.5 text-base font-medium shrink-0 transition-colors"
-                                        style={{ color: copied === ll.token ? "#16a34a" : "#2563eb" }}
-                                      >
-                                        {copied === ll.token ? <Check size={14} /> : <Copy size={14} />}
-                                        {copied === ll.token ? "Kopiert!" : "Kopier"}
-                                      </button>
+                                      <div className="flex items-center gap-3 flex-wrap">
+                                        {/* Status */}
+                                        <span className="text-base font-semibold px-2.5 py-0.5 rounded-full shrink-0"
+                                          style={{ color: LINK_STATUS_COLOR[ll.status], background: LINK_STATUS_BG[ll.status] }}>
+                                          {LINK_STATUS_LABEL[ll.status]}
+                                        </span>
+                                        {/* Opened badge */}
+                                        <span className="text-base px-2.5 py-0.5 rounded-full shrink-0"
+                                          style={{
+                                            background: ll.opened_at ? "#f0fdf4" : "#f8fafc",
+                                            color: ll.opened_at ? "#16a34a" : "#94a3b8",
+                                          }}>
+                                          {ll.opened_at
+                                            ? `Åpnet ${new Date(ll.opened_at).toLocaleDateString("nb-NO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
+                                            : "Ikke åpnet"}
+                                        </span>
+                                        {/* Expiry */}
+                                        <span className="text-base text-gray-400 shrink-0 hidden sm:block ml-auto">
+                                          {ll.status === "expired"
+                                            ? "Utløpt"
+                                            : `Utløper ${new Date(ll.expires_at).toLocaleDateString("nb-NO", { day: "2-digit", month: "short" })}`}
+                                        </span>
+                                        {/* Copy */}
+                                        <button
+                                          onClick={() => copyLink(ll.token)}
+                                          className="flex items-center gap-1.5 text-base font-medium shrink-0 transition-colors"
+                                          style={{ color: copied === ll.token ? "#16a34a" : "#2563eb" }}
+                                        >
+                                          {copied === ll.token ? <Check size={14} /> : <Copy size={14} />}
+                                          {copied === ll.token ? "Kopiert!" : "Kopier"}
+                                        </button>
+                                      </div>
                                     </div>
                                   ))}
                                 </div>

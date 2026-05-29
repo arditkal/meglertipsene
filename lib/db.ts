@@ -30,6 +30,7 @@ export type LeadLink = {
   token: string;
   created_at: string;
   expires_at: string;
+  opened_at: string | null;
   status: "pending" | "paid" | "expired";
   stripe_session_id: string | null;
 };
