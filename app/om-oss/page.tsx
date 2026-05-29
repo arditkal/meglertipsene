@@ -33,9 +33,8 @@ const values = [
 ];
 
 const team = [
-  { initials: "AS", name: "Ardit Selmani", role: "Gründer & daglig leder" },
-  { initials: "ML", name: "Marte Lund", role: "Megleransvarlig" },
-  { initials: "EK", name: "Eirik Kjeldsen", role: "Produktsjef" },
+  { initials: "AK", name: "Ardit Kallaba", role: "Gründer & daglig leder" },
+  { initials: "ML", name: "Magnus Laukas", role: "Gründer & megleransvarlig" },
 ];
 
 const stats = [
