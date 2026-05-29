@@ -59,7 +59,7 @@ const labelCls = "block text-base font-medium text-gray-700 mb-1.5";
 
 export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [form, setForm] = useState<FormData>(empty);
+  const [form, setForm] = useState<FormData>(dummy);
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -129,7 +129,7 @@ export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props
     onClose();
     setTimeout(() => {
       setStep(1);
-      setForm(empty);
+      setForm(dummy);
     }, 300);
   }
 

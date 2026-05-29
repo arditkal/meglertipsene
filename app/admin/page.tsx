@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { LogOut, RefreshCw, ChevronDown, Link2, Copy, Check, Plus } from "lucide-react";
+import { LogOut, RefreshCw, ChevronDown, Link2, Copy, Check, Plus, ChevronRight } from "lucide-react";
 import type { Lead, LeadLink } from "@/lib/db";
 
 type Filter = "alle" | "ny" | "sendt" | "betalt";
@@ -202,24 +202,36 @@ export default function AdminPage() {
 
           {!loading && leads.map((lead) => (
             <div key={lead.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <button
-                className="w-full px-6 py-4 flex items-center gap-4 text-left hover:bg-gray-50 transition-colors"
-                onClick={() => handleExpand(lead.id)}
-              >
+              <div className="w-full px-6 py-4 flex items-center gap-4">
                 <span className="text-base font-semibold px-3 py-1 rounded-full shrink-0"
                   style={{ color: STATUS_COLOR[lead.status], background: STATUS_BG[lead.status] }}>
                   {STATUS_LABEL[lead.status] ?? lead.status}
                 </span>
-                <div className="min-w-0 flex-1">
+                <button
+                  className="min-w-0 flex-1 text-left"
+                  onClick={() => handleExpand(lead.id)}
+                >
                   <p className="font-semibold text-[#0a1628] truncate">{lead.navn || "–"} — {lead.omrade || "Ukjent område"}</p>
                   <p className="text-base text-gray-400 truncate">{lead.adresse} · {lead.boligtype} · {lead.stoerrelse} m²</p>
-                </div>
-                <span className="text-base text-gray-400 shrink-0 hidden sm:block">
+                </button>
+                {/* Quick generate links button */}
+                <button
+                  onClick={() => handleExpand(lead.id)}
+                  className="hidden sm:flex items-center gap-1.5 text-base font-medium px-3 py-1.5 rounded-lg transition-colors shrink-0"
+                  style={{ background: "#f0f4ff", color: "#2563eb" }}
+                >
+                  <Link2 size={13} />
+                  Generer lenker
+                  <ChevronRight size={13} />
+                </button>
+                <span className="text-base text-gray-400 shrink-0 hidden lg:block">
                   {new Date(lead.created_at).toLocaleDateString("nb-NO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
                 </span>
-                <ChevronDown size={18} className="text-gray-300 shrink-0 transition-transform"
-                  style={{ transform: expanded === lead.id ? "rotate(180deg)" : "rotate(0)" }} />
-              </button>
+                <button onClick={() => handleExpand(lead.id)}>
+                  <ChevronDown size={18} className="text-gray-300 shrink-0 transition-transform"
+                    style={{ transform: expanded === lead.id ? "rotate(180deg)" : "rotate(0)" }} />
+                </button>
+              </div>
 
               {expanded === lead.id && (
                 <div className="px-6 pb-6 pt-2 border-t border-gray-50" style={{ background: "#fafbfc" }}>
