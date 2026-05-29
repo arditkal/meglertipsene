@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
 import Benefits from "@/components/Benefits";
 import CtaBanner from "@/components/CtaBanner";
@@ -11,6 +12,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <Stats />
         <HowItWorks />
         <Benefits />
         <CtaBanner />

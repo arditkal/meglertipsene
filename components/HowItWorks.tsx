@@ -3,60 +3,70 @@ import { ClipboardList, Users, CheckCircle } from "lucide-react";
 const steps = [
   {
     icon: ClipboardList,
-    step: "01",
-    title: "Fyll ut skjemaet",
+    number: "01",
+    title: "Oppgi boligen din",
     description:
-      "Oppgi adressen på boligen du ønsker å selge. Det tar kun to minutter og er helt gratis.",
+      "Fyll inn adresse og noen detaljer om boligen. Det tar under to minutter.",
   },
   {
     icon: Users,
-    step: "02",
-    title: "Motta tilbud fra meglere",
+    number: "02",
+    title: "Motta tilbud",
     description:
-      "Vi kobler deg med lokale eiendomsmeglere som sender deg sine beste tilbud direkte.",
+      "Lokale meglere sender deg sine beste tilbud innen 48 timer.",
   },
   {
     icon: CheckCircle,
-    step: "03",
-    title: "Velg den beste megleren",
+    number: "03",
+    title: "Velg og selg",
     description:
-      "Sammenlign tilbudene og velg megleren som passer deg best. Helt uforpliktende.",
+      "Sammenlign tilbud på pris, erfaring og anmeldelser. Velg fritt.",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 bg-[#f4f7fb]">
+    <section className="py-24 bg-[#f8fafc]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#0d1f2d] mb-4">
-            Hvordan fungerer det?
-          </h2>
-          <p className="text-gray-600 text-lg max-w-lg mx-auto leading-relaxed">
-            Tre enkle steg for å finne den rette eiendomsmegleren for deg.
+        <div className="max-w-xl mb-14">
+          <p className="text-blue-600 font-semibold text-base uppercase tracking-widest mb-3">
+            Slik fungerer det
           </p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-[#0a1628] leading-tight">
+            Fra adresse til signert kontrakt
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-200 rounded-2xl overflow-hidden">
+          {steps.map((step, i) => {
             const Icon = step.icon;
             return (
               <div
-                key={step.step}
-                className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow"
+                key={step.number}
+                className="bg-white p-8 sm:p-10 relative"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-50 rounded-xl mb-6">
-                  <Icon size={26} className="text-blue-600" />
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <Icon size={22} className="text-blue-600" />
+                  </div>
+                  <span
+                    className="text-5xl font-bold tracking-tight"
+                    style={{ color: "rgba(0,0,0,0.06)" }}
+                  >
+                    {step.number}
+                  </span>
                 </div>
-                <div className="text-blue-600 text-base font-semibold uppercase tracking-widest mb-2">
-                  Steg {step.step}
-                </div>
-                <h3 className="text-xl font-semibold text-[#0d1f2d] mb-3">
+                <h3 className="text-xl font-semibold text-[#0a1628] mb-3">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed text-base">
+                <p className="text-gray-500 text-base leading-relaxed">
                   {step.description}
                 </p>
+                {i < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-10 right-0 translate-x-1/2 z-10">
+                    <div className="w-5 h-5 bg-white border-2 border-gray-200 rounded-full" />
+                  </div>
+                )}
               </div>
             );
           })}
