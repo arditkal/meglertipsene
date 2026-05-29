@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Star } from "lucide-react";
 
 const mockMeglere = [
@@ -11,6 +12,7 @@ const mockMeglere = [
 
 export default function Hero() {
   const [postnummer, setPostnummer] = useState("");
+  const router = useRouter();
 
   return (
     <section
@@ -79,15 +81,15 @@ export default function Hero() {
             className="flex flex-col sm:flex-row gap-3 max-w-[440px]"
             onSubmit={(e) => {
               e.preventDefault();
-              document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth" });
+              const q = postnummer.trim();
+              if (q) router.push(`/meglere?q=${encodeURIComponent(q)}`);
             }}
           >
             <input
               type="text"
               value={postnummer}
               onChange={(e) => setPostnummer(e.target.value)}
-              placeholder="Postnummer..."
-              maxLength={4}
+              placeholder="Område, by eller navn..."
               className="flex-1 text-white placeholder-white/30 rounded-xl px-5 py-3.5 text-base outline-none transition-all"
               style={{
                 background: "rgba(255,255,255,0.06)",
@@ -117,7 +119,7 @@ export default function Hero() {
           >
             <span>Ingen kredittkort</span>
             <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
-            <span>1 200+ meglere</span>
+            <span>763 meglere i databasen</span>
             <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
             <span>Svar innen 48 timer</span>
           </div>
