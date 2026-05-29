@@ -11,6 +11,7 @@ export function GET(req: NextRequest) {
   const result = meglere.map((m) => ({
     id: m.id,
     fornavn: m.navn.split(" ")[0],
+    firma: m.firma,
     antall_annonser: m.antall_annonser,
   }));
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRight, Star, RotateCcw } from "lucide-react";
+import ContactModal, { type PreviewMegler } from "./ContactModal";
 
 // — Mockup data for idle state —
 const mockMeglere = [
@@ -25,19 +25,13 @@ const MSG_INTERVAL = TOTAL_MS / MESSAGES.length;
 
 type Phase = "idle" | "loading" | "results";
 
-interface PreviewMegler {
-  id: number;
-  fornavn: string;
-  antall_annonser: number;
-}
-
 export default function Hero() {
   const [inputVal, setInputVal] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [query, setQuery] = useState("");
   const [shownCount, setShownCount] = useState(0);
   const [previewMeglere, setPreviewMeglere] = useState<PreviewMegler[]>([]);
-  const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Message ticker during loading
   useEffect(() => {
@@ -343,10 +337,13 @@ export default function Hero() {
                         {m.fornavn[0]}
                       </div>
 
-                      {/* Name */}
-                      <div className="flex-1">
+                      {/* Name + firma */}
+                      <div className="flex-1 min-w-0">
                         <div className="text-white font-semibold text-lg leading-tight">
                           {m.fornavn}
+                        </div>
+                        <div className="text-base truncate" style={{ color: "rgba(255,255,255,0.4)" }}>
+                          {m.firma}
                         </div>
                       </div>
 
@@ -365,7 +362,7 @@ export default function Hero() {
 
                 {/* CTA */}
                 <button
-                  onClick={() => router.push(`/meglere?q=${encodeURIComponent(query)}`)}
+                  onClick={() => setModalOpen(true)}
                   className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-4 rounded-xl text-base transition-colors flex items-center justify-center gap-2 animate-fade-up"
                   style={{ animationDelay: "360ms", opacity: 0, animationFillMode: "forwards" }}
                 >
@@ -406,6 +403,13 @@ export default function Hero() {
         )}
 
       </div>
+
+      <ContactModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        meglere={previewMeglere}
+        omrade={query}
+      />
     </section>
   );
 }
