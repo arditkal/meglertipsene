@@ -41,6 +41,18 @@ const empty: FormData = {
   epost: "",
 };
 
+const dummy: FormData = {
+  adresse: "Bygdøy allé 55, 0265 Oslo",
+  boligtype: "leilighet",
+  stoerrelse: "98",
+  antallRom: "4",
+  estimertPris: "6 500 000",
+  kommentar: "Nyoppusset bad og kjøkken. Sydvendt balkong.",
+  navn: "Kari Nordmann",
+  telefon: "400 12 345",
+  epost: "kari@eksempel.no",
+};
+
 const inputCls =
   "w-full border border-gray-200 rounded-xl px-4 py-3 text-base text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-50 outline-none transition-all bg-white";
 const labelCls = "block text-base font-medium text-gray-700 mb-1.5";
@@ -108,13 +120,22 @@ export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props
           <div className="px-6 pt-6 pb-4 border-b border-gray-100 shrink-0">
             <div className="flex items-start justify-between mb-4">
               <h2 className="text-xl font-bold text-[#0a1628]">Ta kontakt med meglerne</h2>
-              <button
-                onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-1 -mt-1 -mr-1"
-                aria-label="Lukk"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { setForm(dummy); setStep(2); }}
+                  className="text-base px-3 py-1 rounded-lg font-medium transition-colors"
+                  style={{ background: "#f0f4ff", color: "#2563eb" }}
+                >
+                  Testdata
+                </button>
+                <button
+                  onClick={handleClose}
+                  className="text-gray-400 hover:text-gray-600 transition-colors p-1 -mt-1 -mr-1"
+                  aria-label="Lukk"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             {/* Megler chips */}
