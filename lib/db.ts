@@ -1,6 +1,8 @@
-import { sql } from "@vercel/postgres";
+import { neon } from "@neondatabase/serverless";
 
-export { sql };
+export function getDb() {
+  return neon(process.env.DATABASE_URL!);
+}
 
 export type Lead = {
   id: string;

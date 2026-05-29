@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
-// One-time setup: creates the leads table.
-// Call once after connecting Vercel Postgres: GET /api/setup?secret=YOUR_ADMIN_PASSWORD
 export async function GET(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get("secret");
   if (secret !== process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: "Ikke autorisert" }, { status: 401 });
   }
+
+  const sql = getDb();
 
   await sql`
     CREATE TABLE IF NOT EXISTS leads (

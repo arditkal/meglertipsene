@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
     const b = await req.json();
+    const sql = getDb();
 
     await sql`
       INSERT INTO leads
@@ -13,8 +14,8 @@ export async function POST(req: NextRequest) {
         (${b.omrade ?? ""}, ${b.adresse ?? ""}, ${b.boligtype ?? ""},
          ${b.stoerrelse ?? ""}, ${b.antall_rom ?? ""}, ${b.estimert_pris ?? ""},
          ${b.kommentar ?? ""}, ${b.navn ?? ""}, ${b.telefon ?? ""}, ${b.epost ?? ""},
-         ${JSON.stringify(b.megler_ids ?? [])},
-         ${JSON.stringify(b.megler_navn ?? [])},
+         ${JSON.stringify(b.megler_ids ?? [])}::jsonb,
+         ${JSON.stringify(b.megler_navn ?? [])}::jsonb,
          'ny')
     `;
 
