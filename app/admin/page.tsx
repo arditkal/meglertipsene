@@ -30,6 +30,7 @@ export default function AdminPage() {
   // links per lead_id
   const [linkMap, setLinkMap] = useState<Record<string, LeadLinkWithMeta[]>>({});
   const [linkLoading, setLinkLoading] = useState<Record<string, boolean>>({});
+  const [linkError, setLinkError] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState<string | null>(null);
 
   const fetchLeads = useCallback(async (f: Filter = filter) => {
@@ -94,12 +95,22 @@ export default function AdminPage() {
   async function generateLink(lead: Lead, megler_id: number, megler_navn: string) {
     const key = `${lead.id}-${megler_id}`;
     setLinkLoading((p) => ({ ...p, [key]: true }));
-    const res = await fetch("/api/lead-links", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ lead_id: lead.id, megler_id, megler_navn }),
-    });
-    if (res.ok) fetchLinks(lead.id);
+    setLinkError((p) => ({ ...p, [key]: "" }));
+    try {
+      const res = await fetch("/api/lead-links", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lead_id: lead.id, megler_id, megler_navn }),
+      });
+      if (res.ok) {
+        await fetchLinks(lead.id);
+      } else {
+        const data = await res.json();
+        setLinkError((p) => ({ ...p, [key]: data.error ?? "Feil ved generering" }));
+      }
+    } catch {
+      setLinkError((p) => ({ ...p, [key]: "Nettverksfeil" }));
+    }
     setLinkLoading((p) => ({ ...p, [key]: false }));
   }
 
@@ -246,7 +257,7 @@ export default function AdminPage() {
                       <div className="space-y-3">
                         {lead.megler_ids.map((mid, i) => {
                           const mNavn = lead.megler_navn[i] ?? `Megler ${mid}`;
-                          const existingLinks = (linkMap[lead.id] ?? []).filter((l) => l.megler_id === mid);
+                          const existingLinks = (linkMap[lead.id] ?? []).filter((l) => Number(l.megler_id) === Number(mid));
                           const genKey = `${lead.id}-${mid}`;
 
                           return (
@@ -261,6 +272,9 @@ export default function AdminPage() {
                                   <Plus size={14} />
                                   {linkLoading[genKey] ? "Genererer..." : "Generer lenke"}
                                 </button>
+                                {linkError[genKey] && (
+                                  <span className="text-base text-red-500">{linkError[genKey]}</span>
+                                )}
                               </div>
 
                               {existingLinks.length === 0 ? (

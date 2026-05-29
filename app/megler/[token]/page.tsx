@@ -21,7 +21,7 @@ export default async function MeglerTokenPage({ params }: Props) {
 
   const rows = await sql`
     SELECT
-      ll.id, ll.token, ll.status, ll.expires_at, ll.megler_navn, ll.megler_id, ll.lead_id,
+      ll.id, ll.token, ll.status, ll.expires_at, ll.opened_at, ll.megler_navn, ll.megler_id, ll.lead_id,
       l.omrade, l.adresse, l.boligtype, l.stoerrelse,
       l.antall_rom, l.estimert_pris, l.kommentar,
       l.navn, l.telefon, l.epost
