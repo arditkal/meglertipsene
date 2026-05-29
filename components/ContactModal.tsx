@@ -71,6 +71,32 @@ export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props
   const step1Valid = form.adresse.trim() && form.boligtype && form.stoerrelse.trim();
   const step2Valid = form.navn.trim() && form.telefon.trim() && form.epost.trim();
 
+  async function sendTestData() {
+    setLoading(true);
+    try {
+      await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          omrade,
+          adresse: dummy.adresse,
+          boligtype: dummy.boligtype,
+          stoerrelse: dummy.stoerrelse,
+          antall_rom: dummy.antallRom,
+          estimert_pris: dummy.estimertPris,
+          kommentar: dummy.kommentar,
+          navn: dummy.navn,
+          telefon: dummy.telefon,
+          epost: dummy.epost,
+          megler_ids: meglere.map((m) => m.id),
+          megler_navn: meglere.map((m) => `${m.fornavn} · ${m.firma}`),
+        }),
+      });
+    } catch { /* fail silently */ }
+    setLoading(false);
+    setStep(3);
+  }
+
   async function handleSubmit() {
     setLoading(true);
     try {
@@ -120,22 +146,13 @@ export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props
           <div className="px-6 pt-6 pb-4 border-b border-gray-100 shrink-0">
             <div className="flex items-start justify-between mb-4">
               <h2 className="text-xl font-bold text-[#0a1628]">Ta kontakt med meglerne</h2>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => { setForm(dummy); setStep(2); }}
-                  className="text-base px-3 py-1 rounded-lg font-medium transition-colors"
-                  style={{ background: "#f0f4ff", color: "#2563eb" }}
-                >
-                  Testdata
-                </button>
-                <button
-                  onClick={handleClose}
-                  className="text-gray-400 hover:text-gray-600 transition-colors p-1 -mt-1 -mr-1"
-                  aria-label="Lukk"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              <button
+                onClick={handleClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 -mt-1 -mr-1"
+                aria-label="Lukk"
+              >
+                <X size={20} />
+              </button>
             </div>
 
             {/* Megler chips */}
@@ -179,6 +196,18 @@ export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props
 
         {/* ── Scrollable body ── */}
         <div className="overflow-y-auto flex-1 px-6 py-5">
+
+          {/* Test-snarvei */}
+          {step === 1 && (
+            <button
+              onClick={sendTestData}
+              disabled={loading}
+              className="w-full mb-5 py-3 rounded-xl text-base font-semibold border-2 border-dashed transition-colors"
+              style={{ borderColor: "#2563eb", color: "#2563eb", background: "#f0f4ff" }}
+            >
+              {loading ? "Sender..." : "Send testdata direkte →"}
+            </button>
+          )}
 
           {/* Step 1 — boliginfo */}
           {step === 1 && (
