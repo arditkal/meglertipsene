@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { LogOut, RefreshCw, ChevronDown } from "lucide-react";
-import type { Lead } from "@/lib/supabase";
+import type { Lead } from "@/lib/db";
 
 type Filter = "alle" | "ny" | "sendt" | "betalt";
 

@@ -1,53 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const b = await req.json();
 
-    const {
-      omrade,
-      adresse,
-      boligtype,
-      stoerrelse,
-      antall_rom,
-      estimert_pris,
-      kommentar,
-      navn,
-      telefon,
-      epost,
-      megler_ids,
-      megler_navn,
-    } = body;
+    await sql`
+      INSERT INTO leads
+        (omrade, adresse, boligtype, stoerrelse, antall_rom, estimert_pris,
+         kommentar, navn, telefon, epost, megler_ids, megler_navn, status)
+      VALUES
+        (${b.omrade ?? ""}, ${b.adresse ?? ""}, ${b.boligtype ?? ""},
+         ${b.stoerrelse ?? ""}, ${b.antall_rom ?? ""}, ${b.estimert_pris ?? ""},
+         ${b.kommentar ?? ""}, ${b.navn ?? ""}, ${b.telefon ?? ""}, ${b.epost ?? ""},
+         ${JSON.stringify(b.megler_ids ?? [])},
+         ${JSON.stringify(b.megler_navn ?? [])},
+         'ny')
+    `;
 
-    const db = getAdminClient();
-
-    const { data, error } = await db.from("leads").insert([
-      {
-        omrade: omrade ?? "",
-        adresse: adresse ?? "",
-        boligtype: boligtype ?? "",
-        stoerrelse: stoerrelse ?? "",
-        antall_rom: antall_rom ?? "",
-        estimert_pris: estimert_pris ?? "",
-        kommentar: kommentar ?? "",
-        navn: navn ?? "",
-        telefon: telefon ?? "",
-        epost: epost ?? "",
-        megler_ids: megler_ids ?? [],
-        megler_navn: megler_navn ?? [],
-        status: "ny",
-      },
-    ]);
-
-    if (error) {
-      console.error("Supabase error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ ok: true, data });
+    return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("Lead API error:", err);
+    console.error("Lead insert error:", err);
     return NextResponse.json({ error: "Serverfeil" }, { status: 500 });
   }
 }

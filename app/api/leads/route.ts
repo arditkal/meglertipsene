@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getAdminClient } from "@/lib/supabase";
+import { sql } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();
@@ -10,24 +10,13 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url);
   const status = url.searchParams.get("status");
-  const db = getAdminClient();
 
-  let query = db
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const { rows } =
+    status && status !== "alle"
+      ? await sql`SELECT * FROM leads WHERE status = ${status} ORDER BY created_at DESC`
+      : await sql`SELECT * FROM leads ORDER BY created_at DESC`;
 
-  if (status && status !== "alle") {
-    query = query.eq("status", status);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
+  return NextResponse.json(rows);
 }
 
 export async function PATCH(req: NextRequest) {
@@ -37,16 +26,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   const { id, status } = await req.json();
-  const db = getAdminClient();
-
-  const { error } = await db
-    .from("leads")
-    .update({ status })
-    .eq("id", id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  await sql`UPDATE leads SET status = ${status} WHERE id = ${id}`;
 
   return NextResponse.json({ ok: true });
 }
