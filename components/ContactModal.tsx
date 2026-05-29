@@ -61,7 +61,28 @@ export default function ContactModal({ isOpen, onClose, meglere, omrade }: Props
 
   async function handleSubmit() {
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    try {
+      await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          omrade,
+          adresse: form.adresse,
+          boligtype: form.boligtype,
+          stoerrelse: form.stoerrelse,
+          antall_rom: form.antallRom,
+          estimert_pris: form.estimertPris,
+          kommentar: form.kommentar,
+          navn: form.navn,
+          telefon: form.telefon,
+          epost: form.epost,
+          megler_ids: meglere.map((m) => m.id),
+          megler_navn: meglere.map((m) => `${m.fornavn} · ${m.firma}`),
+        }),
+      });
+    } catch {
+      // Fail silently — still show success to user
+    }
     setLoading(false);
     setStep(3);
   }
