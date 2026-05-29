@@ -48,14 +48,11 @@ export default function MeglerCard({ megler }: { megler: Megler }) {
         <div className="flex flex-wrap gap-1.5">
           {megler.omrader.slice(0, 5).map((o) => (
             <span
-              key={o}
+              key={o.navn}
               className="px-3 py-1 rounded-full text-base"
-              style={{
-                background: "#f1f5f9",
-                color: "#475569",
-              }}
+              style={{ background: "#f1f5f9", color: "#475569" }}
             >
-              {o}
+              {o.navn}
             </span>
           ))}
           {megler.omrader.length > 5 && (

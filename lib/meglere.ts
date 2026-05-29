@@ -1,17 +1,22 @@
 import meglereData from "./meglere.json";
 
+export type OmradeFrekvens = {
+  navn: string;
+  antall: number;
+};
+
 export type Megler = {
   id: number;
   navn: string;
   firma: string;
-  org_id: string;
   tittel: string;
   telefon: string;
   telefon2: string;
   email: string;
   email2: string;
   finn_org_url: string;
-  omrader: string[];
+  omrader: OmradeFrekvens[];
+  byer: string[];
   antall_annonser: number;
 };
 
@@ -34,23 +39,34 @@ export function sokMeglere(query: string, limit = 24): Megler[] {
   const scored = alleMeglere.map((m) => {
     let score = 0;
 
-    for (const omrade of m.omrader) {
-      const o = norm(omrade);
-      if (o === q) {
-        score += 20;
-      } else if (terms.every((t) => o.includes(t))) {
-        score += 10;
-      } else if (terms.some((t) => o.includes(t))) {
-        score += 4;
+    // Områdesøk — vektet etter frekvens
+    for (const o of m.omrader) {
+      const on = norm(o.navn);
+      const freq = o.antall;
+
+      if (on === q) {
+        score += freq * 6;             // eksakt treff
+      } else if (terms.every((t) => on.includes(t))) {
+        score += freq * 3;             // alle termer matcher
+      } else if (terms.some((t) => on.includes(t))) {
+        score += freq * 1;             // delvis match
       }
     }
 
-    const firmaNorm = norm(m.firma);
-    if (firmaNorm.includes(q)) score += 5;
-    else if (terms.some((t) => firmaNorm.includes(t))) score += 2;
+    // By-tag fra firmanavn
+    for (const by of m.byer) {
+      if (norm(by) === q || terms.some((t) => norm(by).includes(t))) {
+        score += 12;
+      }
+    }
 
-    const navnNorm = norm(m.navn);
-    if (navnNorm.includes(q)) score += 3;
+    // Firmanavn
+    const fn = norm(m.firma);
+    if (fn.includes(q)) score += 6;
+    else if (terms.some((t) => fn.includes(t))) score += 2;
+
+    // Meglernavn
+    if (norm(m.navn).includes(q)) score += 4;
 
     return { m, score };
   });
